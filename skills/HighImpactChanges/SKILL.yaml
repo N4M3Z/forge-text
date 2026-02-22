@@ -1,0 +1,4 @@
+sources: []
+
+claude:
+    argument-hint: "[document path or description] [audience context]"

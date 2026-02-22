@@ -1,0 +1,70 @@
+skills:
+    claude:
+        CleanText:
+        Emojify:
+        ExplainSimply:
+        FixGrammar:
+        GenerateGlossary:
+        GenerateOutline:
+        HighImpactChanges:
+        MakeLonger:
+        MakeShorter:
+        Pandoc:
+        RewriteAsTweet:
+        Translate:
+
+    gemini:
+        CleanText:
+        Emojify:
+        ExplainSimply:
+        FixGrammar:
+        GenerateGlossary:
+        GenerateOutline:
+        HighImpactChanges:
+        MakeLonger:
+        MakeShorter:
+        Pandoc:
+        RewriteAsTweet:
+        Translate:
+
+    codex:
+        CleanText:
+        Emojify:
+        ExplainSimply:
+        FixGrammar:
+        GenerateGlossary:
+        GenerateOutline:
+        HighImpactChanges:
+        MakeLonger:
+        MakeShorter:
+        Pandoc:
+        RewriteAsTweet:
+        Translate:
+
+    opencode:
+        CleanText:
+        Emojify:
+        ExplainSimply:
+        FixGrammar:
+        GenerateGlossary:
+        GenerateOutline:
+        HighImpactChanges:
+        MakeLonger:
+        MakeShorter:
+        Pandoc:
+        RewriteAsTweet:
+        Translate:
+
+providers:
+    claude:
+        fast: claude-sonnet-4-6
+        strong: claude-opus-4-6
+    gemini:
+        fast: gemini-2.0-flash
+        strong: gemini-2.5-pro
+    codex:
+        fast: o4-mini
+        strong: o4-mini
+    opencode:
+        fast: claude-sonnet-4-6
+        strong: claude-opus-4-6
