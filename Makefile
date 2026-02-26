@@ -1,7 +1,5 @@
 # forge-text Makefile
 
-# Universal skills (deployed to all providers)
-SKILLS   = CleanText Emojify ExplainSimply FixGrammar GenerateGlossary GenerateOutline HighImpactChanges MakeLonger MakeShorter Pandoc RewriteAsTweet Translate
 SKILL_SRC = skills
 LIB_DIR  = $(or $(FORGE_LIB),lib)
 
