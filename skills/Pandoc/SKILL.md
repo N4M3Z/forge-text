@@ -65,6 +65,14 @@ If frontmatter stripping is disabled, use the file directly:
 pandoc "$SOURCE" -o "$OUTPUT" --pdf-engine=$ENGINE
 ```
 
+**Paper size.** Pandoc defaults to letter (612×792 pt) on macOS. For A4 (595×842 pt), set it explicitly in the source frontmatter:
+
+```yaml
+geometry: "a4paper, margin=2cm"
+```
+
+or pass `-V geometry:a4paper` to pandoc. Verify with `pdfinfo <file.pdf> | grep 'Page size'` — a one-page document silently rendered to letter is the most common review-cycle waste here.
+
 ### Step 5: Verify
 
 Check the output:
