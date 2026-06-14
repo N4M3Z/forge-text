@@ -4,7 +4,7 @@ This file provides instructional context for the Gemini AI agent when working wi
 
 ## Project Overview
 
-**forge-text** is a text processing and content analysis module for the Forge ecosystem. It provides 12 skills covering text transformation, grammar correction, content analysis, and document conversion.
+**forge-text** is a text processing and content analysis module for the Forge ecosystem. It provides skills covering text transformation, grammar correction, content analysis, and document conversion.
 
 ### Core Responsibilities
 
@@ -16,10 +16,10 @@ This file provides instructional context for the Gemini AI agent when working wi
 ## Building and Testing
 
 ```bash
-make install          # deploy skills to all providers
-make verify           # check skills deployed across all providers
-make test             # validate-module convention checks
-make clean            # remove installed skills
+make install          # deploy skills via forge CLI and activate git hooks
+make validate         # module structure and code checks
+make release          # build release tarball
+make clean            # remove build artifacts
 ```
 
 ## Skills
@@ -35,6 +35,7 @@ make clean            # remove installed skills
 | `HighImpactChanges` | Document change impact analysis |
 | `MakeLonger` | Text expansion to roughly double length |
 | `MakeShorter` | Text condensation to roughly half length |
+| `MarkdownExtract` | Batch document-to-markdown conversion (docx, rtf, odt, html) |
 | `Pandoc` | Document format conversion via pandoc |
 | `RewriteAsTweet` | Content rewriting as tweet or thread |
 | `Translate` | Text translation to any target language |
@@ -47,28 +48,14 @@ Each skill directory contains:
 - `SKILL.yaml` -- sidecar metadata (sources, provider-specific config)
 - Optional `sample.md` demo files
 
-## Submodule Integration
-
-```bash
-git submodule add https://github.com/N4M3Z/forge-text.git modules/forge-text
-cd modules/forge-text && make install SCOPE=workspace
-```
-
-### Makefile Integration
-
-```makefile
-install-forge-text:
-	@$(MAKE) -C modules/forge-text install SCOPE=$(SCOPE)
-```
-
 ## Configuration
 
-- `defaults.yaml`: provider-keyed skill roster (committed)
+- `defaults.yaml`: module config stub (committed)
 - `config.yaml`: user overrides (gitignored), same structure as defaults
 - `module.yaml`: module metadata (name, version, description)
 
 ## Development Conventions
 
 - **Skill naming**: PascalCase directories matching `name:` in SKILL.md frontmatter
-- **Provider routing**: provider-keyed allowlists in `defaults.yaml` control which platforms receive each skill
-- **forge-lib**: git submodule at `lib/`, provides `install-skills` and `validate-module` Rust binaries
+- **Provider routing**: all skills deploy to all providers; the forge CLI's embedded defaults define provider targets
+- **Deployment**: [forge CLI](https://github.com/N4M3Z/forge-cli) assembles and deploys skills per provider

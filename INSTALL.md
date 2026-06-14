@@ -1,54 +1,78 @@
-# Install
+# forge-text
 
-Instructions for the AI agent. When the user asks to set up forge-text or troubleshoot their installation, follow these steps.
+> Text processing and content analysis skills for AI coding tools. Teaches AI assistants to clean, transform, analyze, and convert text.
 
-## Prerequisites Check
+*This file follows the [install.md](https://github.com/mintlify/install-md) standard: structured instructions for AI agents to execute autonomously. Human readers: see [README.md](README.md) for conventional documentation.*
 
-Before setup, verify the user has what they need:
+I want you to install forge-text for me. Execute all the steps below autonomously.
 
-1. **Git**: Run `git --version`. If missing, guide them:
-   - Mac: "macOS will prompt you to install developer tools -- say yes"
-   - Windows: "Download Git from git-scm.com/downloads/win -- keep all defaults during setup"
-   - Linux: `sudo apt install git` or `sudo dnf install git`
+## OBJECTIVE
 
-2. **Rust** (for building deployment tools): Run `rustc --version`. If missing:
-   - All platforms: `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+Deploy forge-text skills to all AI providers via Makefile.
 
-3. **Claude Code** (or compatible tool): The user is already running it if they're talking to you.
+## DONE WHEN
 
-## Build and Deploy
+- `make validate` passes
+- `ls ~/.claude/skills/FixGrammar/SKILL.md` confirms skill deployment
+- `git config core.hooksPath` returns `.githooks`
 
-```bash
-git submodule update --init lib   # initialize forge-lib (first time only)
-make -C lib build                 # build Rust binaries (first time only)
-make install                      # deploy 12 skills to all providers
-make verify                       # confirm everything deployed
-```
+## Prerequisites
 
-## Standalone Usage
+- Claude Code (or another AI provider CLI)
+- forge-cli (see step below)
 
-If the user cloned forge-text directly:
+Without forge: copy `skills/` into the provider config directory (e.g., `~/.claude/skills/`) directly.
 
-```bash
+## TODO
+
+- [ ] Clone the repository
+- [ ] Install forge-cli if missing
+- [ ] Run `make install` to deploy
+- [ ] Verify skill deployment
+- [ ] Verify git hooks are active
+
+## Steps
+
+### Clone
+
+```sh
 git clone https://github.com/N4M3Z/forge-text.git
 cd forge-text
-git submodule update --init lib
-make -C lib build
+```
+
+If already cloned, pull latest:
+
+```sh
+git pull
+```
+
+### Install forge-cli (if missing)
+
+```sh
+git clone https://github.com/N4M3Z/forge-cli.git
+cd forge-cli
+make install
+cd ../forge-text
+```
+
+### Install
+
+```sh
 make install
 ```
 
-Skills are immediately available as slash commands in Claude Code.
+### Verify skill deployment
 
-## As a Module
-
-When used inside another forge project (e.g., forge-learn):
-
-```bash
-git clone https://github.com/N4M3Z/forge-text.git modules/forge-text
-cd modules/forge-text && make install SCOPE=workspace
+```sh
+ls ~/.claude/skills/FixGrammar/SKILL.md
 ```
 
-## Platform Notes
+### Verify git hooks
 
-- **Windows**: Claude Code runs natively on Windows 10 (1809+). Requires [Git for Windows](https://git-scm.com/downloads/win) for shell operations.
-- **Other tools**: Skills deploy to all providers via `make install`. Slash commands only work in Claude Code and compatible tools.
+```sh
+git config core.hooksPath
+```
+
+Should return `.githooks`.
+
+EXECUTE NOW: Complete the above TODO list.

@@ -1,0 +1,22 @@
+provenance:
+  _type: https://in-toto.io/Statement/v1
+  subject:
+  - name: .pre-commit-config.yaml
+    digest:
+      sha256: 5fd423db729e30a0e7339cd8660569750f33d819bc8f2971b86504810bd9bf87
+  predicate:
+    buildDefinition:
+      buildType: https://github.com/N4M3Z/forge-cli/init/v1
+      externalParameters:
+        source: https://github.com/N4M3Z/forge-cli
+      resolvedDependencies:
+      - uri: templates/init/.pre-commit-config.yaml
+        digest:
+          sha256: 5fd423db729e30a0e7339cd8660569750f33d819bc8f2971b86504810bd9bf87
+    runDetails:
+      builder:
+        id: forge-cli
+        version:
+          forge: 0.3.2
+      metadata:
+        startedOn: 2026-06-16T22:30:08.940394+00:00

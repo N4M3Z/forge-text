@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# doc-extract — batch-convert documents to canonical markdown via pandoc,
+# mirroring the source tree and stems into a target dir. Handles what pandoc
+# reads (docx, rtf, odt, html, …); reports anything else for manual handling.
+# Usage: doc-extract <source-dir> <target-dir>
+set -euo pipefail
+
+if [ "$#" -ne 2 ]; then
+    echo "usage: doc-extract <source-dir> <target-dir>" >&2
+    exit 2
+fi
+
+src="$1"
+dst="$2"
+
+if ! command -v pandoc >/dev/null 2>&1; then
+    echo "doc-extract: pandoc not found (brew install pandoc)" >&2
+    exit 1
+fi
+
+converted=0
+skipped=0
+
+while IFS= read -r -d '' file; do
+    rel="${file#"$src"/}"
+    out="$dst/${rel%.*}.md"
+    ext="$(echo "${file##*.}" | tr '[:upper:]' '[:lower:]')"
+    case "$ext" in
+        docx|rtf|odt|html|htm|epub)
+            mkdir -p "$(dirname "$out")"
+            if pandoc -f "$ext" -t gfm --wrap=none "$file" -o "$out"; then
+                converted=$((converted + 1))
+            else
+                echo "FAIL (pandoc): $rel" >&2
+                skipped=$((skipped + 1))
+            fi
+            ;;
+        *)
+            echo "SKIP (.$ext, not a pandoc input — handle separately): $rel" >&2
+            skipped=$((skipped + 1))
+            ;;
+    esac
+done < <(find "$src" -type f -not -name '.DS_Store' -print0)
+
+echo "doc-extract: $converted converted, $skipped skipped -> $dst"

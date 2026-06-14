@@ -1,12 +1,12 @@
 # Copilot Instructions
 
-forge-text is a text processing and content analysis module. It provides 12 skills for text transformation, grammar correction, content analysis, and document conversion.
+forge-text is a text processing and content analysis module. It provides skills for text transformation, grammar correction, content analysis, and document conversion.
 
 ## Structure
 
-- `skills/` -- 12 skill directories, each with SKILL.md (instructions) and SKILL.yaml (sidecar metadata)
-- `defaults.yaml` -- Skill roster, provider model mapping
-- `lib/` -- forge-lib git submodule (Rust binaries for deployment)
+- `skills/` -- skill directories, each with SKILL.md (instructions) and SKILL.yaml (sidecar metadata)
+- `defaults.yaml` -- module config stub; the forge CLI embeds provider defaults
+- `module.yaml` -- module metadata (name, version, description)
 
 ## Conventions
 
@@ -17,8 +17,8 @@ forge-text is a text processing and content analysis module. It provides 12 skil
 ## Build
 
 ```bash
-make install    # deploy skills to all providers
-make verify     # check deployment
-make test       # validate-module convention checks
-make lint       # mdschema + shellcheck
+make install     # deploy skills via forge CLI and activate git hooks
+make validate    # module structure and code checks
+make release     # build release tarball
+make clean       # remove build artifacts
 ```

@@ -1,0 +1,122 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.11"
+# dependencies = ["openpyxl>=3.1"]
+# ///
+"""Convert .xlsx workbooks to canonical markdown, one GitHub-flavored table per sheet.
+
+Pandoc reads neither xlsx nor pdf, so the MarkdownExtract skill handles xlsx here.
+openpyxl returns real datetime objects and cached formula values, so dates render as
+ISO strings and computed cells carry their last-saved result. Extraction is lossless:
+every cell value is preserved verbatim; shaping happens during curation, not here.
+
+uv resolves the inline openpyxl dependency into an ephemeral environment on first run,
+so nothing installs into a shared or project venv.
+
+Usage:
+    xlsx-extract <file.xlsx> [<file2.xlsx> ...]
+    xlsx-extract --outdir <dir> <file.xlsx> [...]
+
+Writes <stem>.md beside each source, or into --outdir keeping the stem identical so a
+note's paths: pointer and the Data file stay obviously paired.
+"""
+import sys
+from datetime import datetime, date, time, timedelta
+from pathlib import Path
+
+from openpyxl import load_workbook
+
+
+def cell_to_text(value):
+    if value is None:
+        return ""
+    if isinstance(value, bool):
+        return "TRUE" if value else "FALSE"
+    if isinstance(value, datetime):
+        midnight = value.hour == 0 and value.minute == 0 and value.second == 0
+        return value.strftime("%Y-%m-%d") if midnight else value.strftime("%Y-%m-%d %H:%M")
+    if isinstance(value, date):
+        return value.strftime("%Y-%m-%d")
+    if isinstance(value, time):
+        return value.strftime("%H:%M")
+    if isinstance(value, timedelta):
+        return str(value)
+    if isinstance(value, float) and value.is_integer():
+        return str(int(value))
+    return str(value)
+
+
+def escape(text):
+    return text.replace("|", "\\|").replace("\r\n", " ").replace("\n", " ").replace("\r", " ").strip()
+
+
+def trim_trailing_empty(rows):
+    while rows and all(value is None for value in rows[-1]):
+        rows.pop()
+    return rows
+
+
+def content_width(rows):
+    width = 0
+    for row in rows:
+        last_filled = 0
+        for index, value in enumerate(row):
+            if value is not None:
+                last_filled = index + 1
+        width = max(width, last_filled)
+    return width
+
+
+def sheet_to_markdown(sheet):
+    rows = trim_trailing_empty([list(row) for row in sheet.iter_rows(values_only=True)])
+    if not rows:
+        return "_(empty sheet)_\n"
+    width = content_width(rows)
+    if width == 0:
+        return "_(empty sheet)_\n"
+    lines = ["| " + " | ".join(escape(cell_to_text(row[column] if column < len(row) else None))
+                               for column in range(width)) + " |"
+             for row in rows]
+    header = lines[0]
+    separator = "| " + " | ".join("---" for _ in range(width)) + " |"
+    return "\n".join([header, separator, *lines[1:]]) + "\n"
+
+
+def workbook_to_markdown(path):
+    workbook = load_workbook(path, data_only=True)
+    parts = [f"# {path.stem}\n",
+             f"Source: `{path.name}` · extracted to canonical markdown, one table per sheet.\n"]
+    for sheet_name in workbook.sheetnames:
+        parts.append(f"## {sheet_name}\n")
+        parts.append(sheet_to_markdown(workbook[sheet_name]))
+    return "\n".join(parts).rstrip("\n") + "\n"
+
+
+def main(argv):
+    outdir = None
+    sources = []
+    iterator = iter(argv)
+    for argument in iterator:
+        if argument == "--outdir":
+            outdir = Path(next(iterator)).expanduser()
+        else:
+            sources.append(Path(argument).expanduser())
+    if not sources:
+        print(__doc__)
+        return 1
+    if outdir:
+        outdir.mkdir(parents=True, exist_ok=True)
+    for source in sources:
+        if not source.exists():
+            print(f"skip: {source} (not found)")
+            continue
+        target = (outdir / f"{source.stem}.md") if outdir else source.with_suffix(".md")
+        markdown = workbook_to_markdown(source)
+        target.write_text(markdown, encoding="utf-8")
+        workbook = load_workbook(source, data_only=True, read_only=True)
+        print(f"{source.name} -> {target} (sheets: {', '.join(workbook.sheetnames)})")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

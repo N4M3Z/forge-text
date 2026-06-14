@@ -4,7 +4,7 @@ Text processing and content analysis skills for AI coding tools.
 
 ## What Is This?
 
-A collection of 12 text transformation skills that work with [Claude Code](https://claude.ai/code), [Gemini CLI](https://github.com/google-gemini/gemini-cli), [Codex CLI](https://github.com/openai/codex), and [OpenCode](https://opencode.ai). Each skill is a plain text file that teaches your AI assistant a new capability.
+A collection of text transformation skills that work with [Claude Code](https://claude.ai/code), [Gemini CLI](https://github.com/google-gemini/gemini-cli), [Codex CLI](https://github.com/openai/codex), and [OpenCode](https://opencode.ai). Each skill is a plain text file that teaches your AI assistant a new capability.
 
 ## Available Skills
 
@@ -16,8 +16,9 @@ A collection of 12 text transformation skills that work with [Claude Code](https
 | `/FixGrammar` | Fixes grammar and spelling, preserves everything else |
 | `/GenerateGlossary` | Creates an alphabetical glossary of key terms |
 | `/GenerateOutline` | Generates a hierarchical outline from any document |
-| `/HighImpactChanges` | Identifies the 10 highest-impact changes in a document |
+| `/HighImpactChanges` | Identifies the highest-impact changes in a document |
 | `/MakeLonger` | Expands text to roughly twice its length |
+| `/MarkdownExtract` | Batch-converts a folder of source documents to canonical markdown |
 | `/MakeShorter` | Condenses text to roughly half its length |
 | `/Pandoc` | Renders markdown documents to PDF via pandoc |
 | `/RewriteAsTweet` | Rewrites content as a tweet or tweet thread |
@@ -28,12 +29,12 @@ A collection of 12 text transformation skills that work with [Claude Code](https
 ```bash
 git clone https://github.com/N4M3Z/forge-text.git
 cd forge-text
-git submodule update --init lib
-make -C lib build
 make install
 ```
 
-Skills are now available as slash commands in Claude Code. For other providers, `make install` deploys to their directories too.
+`make install` deploys every skill to all providers via the [forge CLI](https://github.com/N4M3Z/forge-cli). If `forge` is missing, ask your AI assistant to execute [INSTALL.md](INSTALL.md), or copy `skills/` into your provider config directory (e.g., `~/.claude/skills/`) directly.
+
+Skills are then available as slash commands in Claude Code.
 
 ## How It Works
 
@@ -46,28 +47,12 @@ skills/
   ...
 ```
 
-`defaults.yaml` controls which skills deploy to which providers. All 12 skills deploy to all 4 providers by default.
-
-## Submodule Integration
-
-To add forge-text to an existing forge setup:
-
-```bash
-git submodule add https://github.com/N4M3Z/forge-text.git modules/forge-text
-cd modules/forge-text && make install SCOPE=workspace
-```
-
-### Makefile Integration
-
-```makefile
-install-forge-text:
-	@$(MAKE) -C modules/forge-text install SCOPE=$(SCOPE)
-```
+All skills deploy to all providers. Create `config.yaml` (gitignored) to override the defaults in `defaults.yaml`.
 
 ## Requirements
 
 - [Git](https://git-scm.com/downloads)
-- [Rust](https://rustup.rs/) (to build forge-lib deployment tools)
+- [forge CLI](https://github.com/N4M3Z/forge-cli) (deployment tooling)
 - An AI coding tool: Claude Code, Gemini CLI, Codex CLI, or OpenCode
 
 ## License

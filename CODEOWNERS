@@ -1,0 +1,6 @@
+# Default owner for everything
+* @N4M3Z
+
+# Infrastructure
+.github/   @N4M3Z
+.githooks/ @N4M3Z

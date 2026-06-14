@@ -22,7 +22,7 @@ repos:
 
           - id: gitleaks
             name: gitleaks
-            entry: gitleaks detect --no-banner
+            entry: gitleaks git --no-banner .
             language: system
             pass_filenames: false
             stages: [pre-push]
